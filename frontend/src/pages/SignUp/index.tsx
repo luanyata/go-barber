@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useCallback, useRef } from 'react';
-import { FiLock, FiLogIn, FiMail } from 'react-icons/fi';
+import { FiArrowLeft, FiLock, FiMail, FiUser } from 'react-icons/fi';
 import * as Yup from 'yup';
 
 import { FormHandles } from '@unform/core';
@@ -11,21 +11,22 @@ import Input from '../../components/Input';
 import getValidationErrors from '../../utils/getValidationErros';
 import { Background, Container, Content } from './styles';
 
-interface Login {
+interface CreateUser {
+  name: string;
   email: string;
-  passwrod: string;
+  password: string;
 }
 
-const SignIn: FunctionComponent = () => {
+const SignUp: FunctionComponent = () => {
+  const formRef = useRef<FormHandles>(null);
 
-  const formRef = useRef<FormHandles>(null)
-
-  const handleSubmit = useCallback(async (data: Login) => {
+  const handleSubmit = useCallback(async (data: CreateUser) => {
     try {
       formRef.current?.setErrors({})
       const schema = Yup.object().shape({
-        email: Yup.string().required('E-mail Obrigatório').email('Digite um e-mail válido'),
-        password: Yup.string().required('Senha Obrigatória')
+        name: Yup.string().required('Nome obrigatório'),
+        email: Yup.string().required('E-mail Obrigatorio').email('Digite um e-mail válido'),
+        password: Yup.string().min(6, 'Minimo de 6 digitos')
       })
       await schema.validate(data, { abortEarly: false })
     } catch (err) {
@@ -36,11 +37,14 @@ const SignIn: FunctionComponent = () => {
 
   return (
     <Container>
+
+      <Background />
       <Content>
         <img src={logoImg} alt="GoBarber" />
 
         <Form ref={formRef} onSubmit={handleSubmit}>
-          <h1>Faça seu logon</h1>
+          <h1>Faça seu cadastro</h1>
+          <Input name="name" icon={FiUser} placeholder="Nome" />
           <Input name="email" icon={FiMail} placeholder="E-mail" />
           <Input
             name="password"
@@ -48,19 +52,18 @@ const SignIn: FunctionComponent = () => {
             type="password"
             placeholder="Senha"
           />
-          <Button type="submit">Entrar</Button>
-          <a href="forgot">Esqueci minha senha</a>
+          <Button type="submit">Cadastrar</Button>
+
         </Form>
 
         <a href="create">
-          <FiLogIn />
-        Criar conta
-      </a>
+          <FiArrowLeft />
+          Voltar para logon
+        </a>
       </Content>
-      <Background />
+
     </Container>
   );
 
 }
-
-export default SignIn;
+export default SignUp;
