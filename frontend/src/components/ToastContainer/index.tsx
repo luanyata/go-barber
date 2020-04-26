@@ -1,43 +1,31 @@
 import React, { FunctionComponent } from 'react'
-import { Container, Toast } from './styles'
-import { FiAlertCircle, FiXCircle } from 'react-icons/fi'
+import { Container } from './styles'
+import { useTransition } from 'react-spring'
+import Toast from './Toast'
 
+import { ToastMessage } from '../../hooks/toast'
 
-const ToastContainer: FunctionComponent = () => {
+interface ToastContainerProps {
+  messages: ToastMessage[]
+}
+
+const ToastContainer: FunctionComponent<ToastContainerProps> = ({ messages }) => {
+
+  const messagesWithTransitions = useTransition(
+    messages,
+    message => message.id,
+    {
+      from: { right: '-120%', opacity: 0 },
+      enter: { right: '0%', opacity: 1 },
+      leave: { right: '-120%', opacity: 0 }
+    }
+  )
+
   return (
     <Container>
-      <Toast hasDescription>
-        <FiAlertCircle size={20} />
-        <div>
-          <strong>Aconteceu um erro</strong>
-          <p>Não foi possivel fazer login na aplicação</p>
-        </div>
-        <button type="button">
-          <FiXCircle size={18} />
-        </button>
-      </Toast>
-
-      <Toast hasDescription={false} type="success">
-        <FiAlertCircle size={20} />
-        <div>
-          <strong>Aconteceu um erro</strong>
-          {/* <p>Não foi possivel fazer login na aplicação</p> */}
-        </div>
-        <button type="button">
-          <FiXCircle size={18} />
-        </button>
-      </Toast>
-
-      <Toast hasDescription type="error">
-        <FiAlertCircle size={20} />
-        <div>
-          <strong>Aconteceu um erro</strong>
-          <p>Não foi possivel fazer login na aplicação</p>
-        </div>
-        <button type="button">
-          <FiXCircle size={18} />
-        </button>
-      </Toast>
+      {messagesWithTransitions.map(({ item, key, props }) => (
+        <Toast key={key} toast={item} style={props} />
+      ))}
     </Container>)
 }
 
