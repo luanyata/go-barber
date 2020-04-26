@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from 'react';
-import { View, Text } from 'react-native';
+import { View, StatusBar, Text } from 'react-native';
 
 const App: FunctionComponent = () => (
-  <View>
-    <Text>Luan Lima</Text>
-  </View>
+  <>
+    <StatusBar barStyle="light-content" backgroundColor="#312e38" />
+    <View style={{ flex: 1, backgroundColor: '#312e38' }} />
+  </>
 );
 
 export default App;
