@@ -1,5 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { FunctionComponent } from 'react';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/mobile';
+import React, { FunctionComponent, useCallback, useRef } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -22,6 +24,11 @@ import {
 
 const SignIn: FunctionComponent = () => {
   const navigation = useNavigation();
+  const formRef = useRef<FormHandles>(null);
+
+  const handleSignIn = useCallback((data: object) => {
+    console.log(data);
+  }, []);
 
   return (
     <>
@@ -41,9 +48,13 @@ const SignIn: FunctionComponent = () => {
               <Title>Faça seu logon</Title>
             </View>
 
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Senha" />
-            <Button onPress={() => {}}>Entrar</Button>
+            <Form ref={formRef} onSubmit={handleSignIn}>
+              <Input name="email" icon="mail" placeholder="E-mail" />
+              <Input name="password" icon="lock" placeholder="Senha" />
+              <Button onPress={() => formRef.current?.submitForm()}>
+                Entrar
+              </Button>
+            </Form>
 
             <ForgotPassword onPress={() => {}}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
