@@ -5,14 +5,18 @@ import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import User from '../infra/typeorm/entities/User';
 import IUsersRepository from '../repositories/IUsersRepository';
+import { injectable, inject } from 'tsyringe';
 
 interface Request {
   userId: string;
   fileName: string;
 }
 
+@injectable()
 class UpdateUserAvatarService {
-  constructor(private usersRepository: IUsersRepository) { }
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository) { }
 
   public async execute({ userId, fileName }: Request): Promise<User> {
 

@@ -4,6 +4,7 @@ import authConfig from '@config/auth';
 import AppError from '@shared/errors/AppError';
 import User from '../infra/typeorm/entities/User';
 import IUsersRepository from '../repositories/IUsersRepository';
+import { injectable, inject } from 'tsyringe';
 
 interface Request {
   email: string;
@@ -15,8 +16,12 @@ interface Response {
   token: string;
 }
 
+@injectable()
 class AuthenticateService {
-  constructor(private usersRepository: IUsersRepository) { }
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository
+  ) { }
 
   public async execute({ email, password }: Request): Promise<Response> {
 
