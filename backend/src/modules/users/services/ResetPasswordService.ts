@@ -4,6 +4,7 @@ import { isAfter, addHours } from 'date-fns'
 import IUserTokensRepository from '../repositories/IUserTokensRepository';
 import AppError from '@shared/errors/AppError';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
+import { isUuid } from 'uuidv4'
 
 interface IRequest {
 	token: string;
@@ -25,6 +26,12 @@ class ResetPasswordService {
 	) { }
 
 	public async execute({ token, password }: IRequest): Promise<void> {
+
+
+		if (!isUuid(token)) {
+			throw new AppError('Token invalid')
+		}
+
 		const userToken = await this.userTokensRepository.findByToken(token);
 
 		if (!userToken) {

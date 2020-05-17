@@ -77,4 +77,9 @@ describe('SendForgotPasswordEmail', () => {
 			password: '123123'
 		})).rejects.toBeInstanceOf(AppError)
 	})
+
+	it('should not be able to reset if token not UUID', async () => {
+		await expect(resetPasswordService.execute({ token: 'efefefe', password: '123' }))
+			.rejects.toBeInstanceOf(AppError)
+	})
 })
