@@ -1,26 +1,38 @@
 import { uuid } from 'uuidv4'
-import { isEqual } from 'date-fns'
+import { isEqual, getMonth, getYear } from 'date-fns'
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
+import IFindAllInMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO';
 
 class FakeAppointmentsRepository implements IAppointmentsRepository {
-  private appointments: Appointment[] = [];
 
-  public async create({ date, providerId }: ICreateAppointmentDTO): Promise<Appointment> {
-    const appointment = new Appointment();
+	private appointments: Appointment[] = [];
 
-    Object.assign(appointment, { id: uuid(), date, providerId })
-    this.appointments.push(appointment)
-    return appointment;
+	public async create({ date, providerId }: ICreateAppointmentDTO): Promise<Appointment> {
+		const appointment = new Appointment();
 
-  }
+		Object.assign(appointment, { id: uuid(), date, providerId })
+		this.appointments.push(appointment)
+		return appointment;
 
-  public async findByDate(date: Date): Promise<Appointment | undefined> {
-    const findAppointment = this.appointments.find(appointment =>
-      isEqual(appointment.date, date))
-    return findAppointment;
-  }
+	}
+
+	public async findByDate(date: Date): Promise<Appointment | undefined> {
+		const findAppointment = this.appointments.find(appointment =>
+			isEqual(appointment.date, date))
+		return findAppointment;
+	}
+
+	public async	findAllInMonthFromProvider({ providerId, month, year }: IFindAllInMonthFromProviderDTO): Promise<Appointment[]> {
+		const appointments = this.appointments.filter(appointment => {
+			appointment.providerId === providerId
+				&& getMonth(appointment.date) + 1 === month
+				&& getYear(appointment.date) === year
+		})
+
+		return appointments;
+	}
 }
 
 export default FakeAppointmentsRepository;

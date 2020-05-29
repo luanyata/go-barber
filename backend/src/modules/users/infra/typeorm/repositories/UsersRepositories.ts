@@ -1,39 +1,59 @@
-import { Repository, getRepository } from 'typeorm';
+import { Repository, getRepository, Not } from 'typeorm';
 import User from '../entities/User';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO';
+import IFindAllProvidersDTO from '@modules/appointments/dtos/IFindAllProvidersDTO';
 
 class UsersRepository implements IUsersRepository {
-  private ormRepository: Repository<User>
+	private ormRepository: Repository<User>
 
-  constructor() {
-    this.ormRepository = getRepository(User)
-  }
+	constructor() {
+		this.ormRepository = getRepository(User)
+	}
 
-  public async findById(id: string): Promise<User | undefined> {
-    const user = await this.ormRepository.findOne({
-      where: { id }
-    });
+	public async findById(id: string): Promise<User | undefined> {
+		const user = await this.ormRepository.findOne({
+			where: { id }
+		});
 
-    return user;
-  }
+		return user;
+	}
 
-  public async findByEmail(email: string): Promise<User | undefined> {
-    const user = await this.ormRepository.findOne({
-      where: { email },
-    });
+	public async findByEmail(email: string): Promise<User | undefined> {
+		const user = await this.ormRepository.findOne({
+			where: { email },
+		});
 
-    return user;
-  }
+		return user;
+	}
 
-  public async create(userData: ICreateUserDTO): Promise<User> {
-    const user = this.ormRepository.create(userData);
-    return this.save(user)
-  }
+	public async findAllProviders({ expectUserId }: IFindAllProvidersDTO): Promise<User[]> {
 
-  public async save(user: User): Promise<User> {
-    return await this.ormRepository.save(user)
-  }
+		let users: User[];
+
+		if (expectUserId) {
+			users = await this.ormRepository.find({
+				where: {
+					id: Not(expectUserId)
+				}
+			});
+		} else {
+			users = await this.ormRepository.find();
+		}
+
+
+		return users
+	}
+
+
+	public async create(userData: ICreateUserDTO): Promise<User> {
+		const user = this.ormRepository.create(userData);
+		return this.save(user)
+	}
+
+	public async save(user: User): Promise<User> {
+		return await this.ormRepository.save(user)
+	}
 }
 
 export default UsersRepository;
