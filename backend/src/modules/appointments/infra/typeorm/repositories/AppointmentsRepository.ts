@@ -39,7 +39,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
 			}
 		})
 
-		throw new Error("Method not implemented.");
+		return appointments;
 	}
 }
 

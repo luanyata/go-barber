@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'reflect-metadata'
 import '@shared/infra/typeorm';
 
 import express, { NextFunction, Request, Response } from 'express';

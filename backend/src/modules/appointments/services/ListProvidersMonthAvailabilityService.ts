@@ -1,3 +1,5 @@
+import "reflect-metadata"
+import { injectable, inject } from 'tsyringe';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import { getDaysInMonth, getDate } from 'date-fns';
 
@@ -12,18 +14,21 @@ type IResponse = Array<{
 	available: boolean
 }>;
 
-
+@injectable()
 class ListProvidersMonthAvailabilityService {
 	constructor(
-		// @inject('AppointmentsRepository')
+		@inject('AppointmentsRepository')
 		private appointmentsRepository: IAppointmentsRepository
 	) { }
 
 	public async execute({ providerId, month, year }: IRequest): Promise<IResponse> {
+
+
+
 		const appointments = await this.appointmentsRepository.findAllInMonthFromProvider({
 			providerId,
-			month,
-			year
+			year,
+			month
 		})
 
 		const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1));
@@ -44,7 +49,6 @@ class ListProvidersMonthAvailabilityService {
 				available: appointmentsInDay.length < 10,
 			}
 		})
-
 		return availability
 	}
 }
