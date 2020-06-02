@@ -10,10 +10,10 @@ class FakeAppointmentsRepository implements IAppointmentsRepository {
 
 	private appointments: Appointment[] = [];
 
-	public async create({ date, providerId }: ICreateAppointmentDTO): Promise<Appointment> {
+	public async create({ date, userId, providerId }: ICreateAppointmentDTO): Promise<Appointment> {
 		const appointment = new Appointment();
 
-		Object.assign(appointment, { id: uuid(), date, providerId })
+		Object.assign(appointment, { id: uuid(), date, providerId, userId })
 		this.appointments.push(appointment)
 		return appointment;
 
