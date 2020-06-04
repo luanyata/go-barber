@@ -1,60 +1,57 @@
-import IUsersRepository from '../repositories/IUsersRepository';
 import { injectable, inject } from 'tsyringe';
-import { isAfter, addHours } from 'date-fns'
-import IUserTokensRepository from '../repositories/IUserTokensRepository';
+import { isAfter, addHours } from 'date-fns';
 import AppError from '@shared/errors/AppError';
+import { isUuid } from 'uuidv4';
+import IUserTokensRepository from '../repositories/IUserTokensRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
-import { isUuid } from 'uuidv4'
+import IUsersRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
-	token: string;
-	password: string
+  token: string;
+  password: string;
 }
 
 @injectable()
 class ResetPasswordService {
-	constructor(
-		@inject('UsersRepository')
-		private usersRepository: IUsersRepository,
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
 
-		@inject('UserTokensRepository')
-		private userTokensRepository: IUserTokensRepository,
+    @inject('UserTokensRepository')
+    private userTokensRepository: IUserTokensRepository,
 
-		@inject('HashProvider')
-		private hashProvider: IHashProvider
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
+  ) {}
 
-	) { }
+  public async execute({ token, password }: IRequest): Promise<void> {
+    if (!isUuid(token)) {
+      throw new AppError('Token invalid');
+    }
 
-	public async execute({ token, password }: IRequest): Promise<void> {
+    const userToken = await this.userTokensRepository.findByToken(token);
 
+    if (!userToken) {
+      throw new AppError('User token does not exists');
+    }
 
-		if (!isUuid(token)) {
-			throw new AppError('Token invalid')
-		}
+    const user = await this.usersRepository.findById(userToken.userId);
 
-		const userToken = await this.userTokensRepository.findByToken(token);
+    if (!user) {
+      throw new AppError('User does not exists');
+    }
 
-		if (!userToken) {
-			throw new AppError('User token does not exists')
-		}
+    const tokenCreateAt = userToken.createdAt;
+    const compareDate = addHours(tokenCreateAt, 2);
 
-		const user = await this.usersRepository.findById(userToken.userId);
+    if (isAfter(Date.now(), compareDate)) {
+      throw new AppError('Token expired');
+    }
 
-		if (!user) {
-			throw new AppError('User does not exists')
-		}
+    user.password = await this.hashProvider.generateHash(password);
 
-		const tokenCreateAt = userToken.createdAt;
-		const compareDate = addHours(tokenCreateAt, 2)
-
-		if (isAfter(Date.now(), compareDate)) {
-			throw new AppError('Token expired')
-		}
-
-		user.password = await this.hashProvider.generateHash(password);
-
-		await this.usersRepository.save(user)
-	}
+    await this.usersRepository.save(user);
+  }
 }
 
 export default ResetPasswordService;

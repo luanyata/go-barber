@@ -1,13 +1,13 @@
-import { Router } from "express";
-import ProfileController from "../controllers/ProfileController";
-import ensureAuthenticate from "../middlewares/ensureAuthenticated";
+import { Router } from 'express';
+import ProfileController from '../controllers/ProfileController';
+import ensureAuthenticate from '../middlewares/ensureAuthenticated';
 
 const profileRouter = Router();
-const profileController = new ProfileController()
+const profileController = new ProfileController();
 
-profileRouter.use(ensureAuthenticate)
+profileRouter.use(ensureAuthenticate);
 
-profileRouter.get('/', profileController.show)
-profileRouter.put('/', profileController.update)
+profileRouter.get('/', profileController.show);
+profileRouter.put('/', profileController.update);
 
-export default profileRouter
+export default profileRouter;
