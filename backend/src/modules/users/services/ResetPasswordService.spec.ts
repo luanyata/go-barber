@@ -88,4 +88,11 @@ describe('SendForgotPasswordEmail', () => {
       resetPasswordService.execute({ token: 'efefefe', password: '123' }),
     ).rejects.toBeInstanceOf(AppError);
   });
+
+  it('should not be able to reset if token format UUID valid non-existing', async () => {
+    const token = '0146d37e-3f6f-4d37-a202-2d87116f6ea7';
+    await expect(
+      resetPasswordService.execute({ token, password: '123' }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
 });
