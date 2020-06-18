@@ -1,9 +1,9 @@
 import 'reflect-metadata';
+import 'express-async-errors';
 import 'dotenv/config';
 import '@shared/infra/typeorm';
 
 import express, { NextFunction, Request, Response } from 'express';
-import 'express-async-errors';
 import cors from 'cors';
 import AppError from '@shared/errors/AppError';
 import { errors } from 'celebrate';
