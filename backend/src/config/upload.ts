@@ -9,7 +9,7 @@ interface IUploadConfig {
   tmpFolder: string;
   uploadsFolder: string;
   multer: { storage: StorageEngine };
-  config: { disk: {}; aws: { bucket: string } };
+  config: { disk: any; aws: { bucket: string } };
 }
 
 export default {
