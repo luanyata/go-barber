@@ -27,7 +27,7 @@ class ListProvidersService {
         expectUserId: userId,
       });
 
-      console.log('Query Feita no banco');
+      console.log('Query exec');
 
       await this.cacheProvider.save<User[]>(`providers-list:${userId}`, users);
     }
