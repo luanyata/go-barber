@@ -27,8 +27,6 @@ class ListProvidersService {
         expectUserId: userId,
       });
 
-      console.log('Query exec');
-
       await this.cacheProvider.save<User[]>(`providers-list:${userId}`, users);
     }
 
