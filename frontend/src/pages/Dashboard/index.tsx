@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useCallback, useEffect, useMemo } from 'react'
 import { Container, Header, HeaderContent, Profile, Content, Schedule, Calendar, NextAppointment, Section, Appointment } from './styles'
 
-import { isToday, format } from 'date-fns'
+import { isToday, format, isAfter } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
 import DayPicker, { DayModifiers } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
@@ -64,9 +64,8 @@ const Dashboard: FunctionComponent = () => {
     })
   }, [selectedDate])
 
-
   const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
-    if (modifiers.available) {
+    if (modifiers.available && !modifiers.disabled) {
       setSelectedDate(day)
     }
   }, [])
@@ -110,10 +109,16 @@ const Dashboard: FunctionComponent = () => {
     })
   }, [appointments])
 
+  const nextAppoitment = useMemo(() => {
+    return appointments.find(appointment =>
+      isAfter(parseISO(appointment.date), new Date()))
+  }, [appointments])
+
   return (
     (
       <Container>
         <Header>
+
           <HeaderContent>
             <img src={logoImg} alt="GoBarber" />
 
@@ -129,6 +134,7 @@ const Dashboard: FunctionComponent = () => {
               <FiPower />
             </button>
           </HeaderContent>
+
         </Header>
         <Content>
           <Schedule>
@@ -140,20 +146,28 @@ const Dashboard: FunctionComponent = () => {
               <span>{selectedWeekDay}</span>
             </p>
 
-            <NextAppointment>
-              <strong>Atendimento a seguir</strong>
-              <div>
-                <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4" alt="Luan Lima" />
-                <strong>Luan Lima</strong>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
-              </div>
-            </NextAppointment>
+            {isToday(selectedDate) && nextAppoitment && (
+              <NextAppointment>
+                <strong>Agendamento a seguir</strong>
+                <div>
+                  <img src={nextAppoitment.user.avatarUrl} alt={nextAppoitment.user.name} />
+                  <strong>{nextAppoitment.user.name}</strong>
+                  <span>
+                    <FiClock />
+                    {nextAppoitment.hourFormatted}
+                  </span>
+                </div>
+              </NextAppointment>
+            )}
+
 
             <Section>
               <strong>Manhã</strong>
+
+              {morningAppoitments.length === 0 && (
+                <p>Nenhum agendamento neste período</p>
+              )}
+
               {morningAppoitments.map(appointment => (
                 <Appointment key={appointment.id}>
                   <span>
@@ -171,6 +185,10 @@ const Dashboard: FunctionComponent = () => {
             </Section>
             <Section>
               <strong>Tarde</strong>
+
+              {afternoonAppoitments.length === 0 && (
+                <p>Nenhum agendamento neste período</p>
+              )}
 
               {afternoonAppoitments.map(appointment => (
                 <Appointment key={appointment.id}>
