@@ -1,36 +1,39 @@
 import React, { FunctionComponent, useState, useCallback, useEffect, useMemo } from 'react'
 import { Container, Header, HeaderContent, Profile, Content, Schedule, Calendar, NextAppointment, Section, Appointment } from './styles'
 
+import { isToday, format } from 'date-fns'
+import ptBR from 'date-fns/locale/pt-BR'
 import DayPicker, { DayModifiers } from 'react-day-picker'
 import 'react-day-picker/lib/style.css'
 import logoImg from '../../assets/logo.svg'
 import { FiPower, FiClock } from 'react-icons/fi'
 import { useAuth } from '../../hooks/auth'
 import api from '../../services/api'
+import { parseISO } from 'date-fns/esm'
 
 interface MonthAvailabilityItem {
   day: number,
   available: boolean
 }
 
+interface Appointment {
+  id: string;
+  date: string;
+  hourFormatted: string;
+  user: {
+    name: string;
+    avatarUrl: string;
+  }
+}
+
 const Dashboard: FunctionComponent = () => {
 
-  const [selectedDate, setselectedDate] = useState(new Date())
-  const [currentMonth, setcurrentMonth] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [monthAvailability, setMonthAvailability] = useState<MonthAvailabilityItem[]>([])
 
   const { signOut, user } = useAuth();
-
-
-  const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
-    if (modifiers.available) {
-      setselectedDate(day)
-    }
-  }, [])
-
-  const handleMonthChange = useCallback((month: Date) => {
-    setcurrentMonth(month)
-  }, []);
 
   useEffect(() => {
     api.get(`/providers/${user.id}/month-availability`, {
@@ -42,6 +45,41 @@ const Dashboard: FunctionComponent = () => {
       setMonthAvailability(response.data)
     })
   }, [currentMonth, user.id])
+
+  useEffect(() => {
+    api.get<Appointment[]>('/appointments/me', {
+      params: {
+        year: selectedDate.getFullYear(),
+        month: selectedDate.getMonth() + 1,
+        day: selectedDate.getDate()
+      }
+    }).then(response => {
+      const appointmentsFormatted = response.data.map(appointment => {
+        return {
+          ...appointment,
+          hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+        }
+      })
+      setAppointments(appointmentsFormatted)
+    })
+  }, [selectedDate])
+
+
+  const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
+    if (modifiers.available) {
+      setSelectedDate(day)
+    }
+  }, [])
+
+  const handleMonthChange = useCallback((month: Date) => {
+    setCurrentMonth(month)
+  }, []);
+
+  const selectedDateAsText = useMemo(() => {
+    return format(selectedDate, "'Dia' dd 'de' MMMM", {
+      locale: ptBR
+    })
+  }, [selectedDate])
 
   const disabledDay = useMemo(() => {
     const dates = monthAvailability
@@ -56,6 +94,21 @@ const Dashboard: FunctionComponent = () => {
     return dates;
   }, [currentMonth, monthAvailability])
 
+  const selectedWeekDay = useMemo(() => {
+    return format(selectedDate, 'cccc', { locale: ptBR })
+  }, [selectedDate])
+
+  const morningAppoitments = useMemo(() => {
+    return appointments.filter(appointment => {
+      return parseISO(appointment.date).getHours() < 12
+    })
+  }, [appointments])
+
+  const afternoonAppoitments = useMemo(() => {
+    return appointments.filter(appointment => {
+      return parseISO(appointment.date).getHours() >= 12
+    })
+  }, [appointments])
 
   return (
     (
@@ -65,7 +118,7 @@ const Dashboard: FunctionComponent = () => {
             <img src={logoImg} alt="GoBarber" />
 
             <Profile>
-              <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4"
+              <img src={user.avatarUrl}
                 alt={user.name} />
               <div>
                 <span>Bem-vindo,</span>
@@ -82,9 +135,9 @@ const Dashboard: FunctionComponent = () => {
 
             <h1>Horários Agendados</h1>
             <p>
-              <span>Hoje</span>
-              <span>Dia 06</span>
-              <span>Segunda-feira</span>
+              {isToday(selectedDate) && <span>Hoje</span>}
+              <span>{selectedDateAsText}</span>
+              <span>{selectedWeekDay}</span>
             </p>
 
             <NextAppointment>
@@ -101,56 +154,37 @@ const Dashboard: FunctionComponent = () => {
 
             <Section>
               <strong>Manhã</strong>
-              <Appointment>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
+              {morningAppoitments.map(appointment => (
+                <Appointment key={appointment.id}>
+                  <span>
+                    <FiClock />
+                    {appointment.hourFormatted}
 
-                <div>
-                  <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4" alt="Luan Lima" />
-                  <strong>Luan Lima</strong>
-                </div>
-              </Appointment>
+                  </span>
+                  <div>
+                    <img src={appointment.user.avatarUrl} alt={appointment.user.name} />
+                    <strong>{appointment.user.name}</strong>
+                  </div>
+                </Appointment>
 
-              <Appointment>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
-
-                <div>
-                  <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4" alt="Luan Lima" />
-                  <strong>Luan Lima</strong>
-                </div>
-              </Appointment>
+              ))}
             </Section>
             <Section>
               <strong>Tarde</strong>
-              <Appointment>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
 
-                <div>
-                  <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4" alt="Luan Lima" />
-                  <strong>Luan Lima</strong>
-                </div>
-              </Appointment>
-              <Appointment>
-                <span>
-                  <FiClock />
-                  08:00
-                </span>
-
-                <div>
-                  <img src="https://avatars2.githubusercontent.com/u/5342280?s=460&u=0da4ef3c176d35a0609cbde11c28dae710da340e&v=4" alt="Luan Lima" />
-                  <strong>Luan Lima</strong>
-                </div>
-              </Appointment>
+              {afternoonAppoitments.map(appointment => (
+                <Appointment key={appointment.id}>
+                  <span>
+                    <FiClock />
+                    {appointment.hourFormatted}
+                  </span>
+                  <div>
+                    <img src={appointment.user.avatarUrl} alt={appointment.user.name} />
+                    <strong>{appointment.user.name}</strong>
+                  </div>
+                </Appointment>
+              ))}
             </Section>
-
           </Schedule>
           <Calendar >
 
