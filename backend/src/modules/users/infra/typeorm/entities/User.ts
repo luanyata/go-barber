@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import uploadConfig from '@config/upload';
+import uploadConfig from '@config/storage';
 import { Exclude, Expose } from 'class-transformer';
 
 @Entity('users')
@@ -40,7 +40,7 @@ class User {
 
     switch (uploadConfig.driver) {
       case 'disk':
-        return `${process.env.APP_API_URL}/file/${this.avatar}`;
+        return `${process.env.APP_API_URL}/files/${this.avatar}`;
       case 's3':
         return `https://s3.amazonaws.com/${uploadConfig.config.aws.bucket}/${this.avatar}`;
       default:

@@ -17,7 +17,7 @@ class UpdateUserAvatarService {
 
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
-  ) {}
+  ) { }
 
   public async execute({ userId, fileName }: Request): Promise<User> {
     const user = await this.usersRepository.findById(userId);
@@ -30,9 +30,9 @@ class UpdateUserAvatarService {
       await this.storageProvider.deleteFile(user.avatar);
     }
 
-    const avatatFileName = await this.storageProvider.saveFile(fileName);
+    const avatarFileName = await this.storageProvider.saveFile(fileName);
 
-    user.avatar = avatatFileName;
+    user.avatar = avatarFileName;
     await this.usersRepository.save(user);
 
     return user;
