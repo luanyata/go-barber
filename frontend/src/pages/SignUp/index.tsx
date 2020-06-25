@@ -12,7 +12,7 @@ import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import { AnimationContent, Background, Container, Content } from './styles';
 
-interface CreateUser {
+interface SignUpFormData {
   name: string;
   email: string;
   password: string;
@@ -25,7 +25,7 @@ const SignUp: FunctionComponent = () => {
   const history = useHistory();
 
   const handleSubmit = useCallback(
-    async (data: CreateUser) => {
+    async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({

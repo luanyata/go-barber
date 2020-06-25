@@ -1,5 +1,5 @@
-import styled, { css } from 'styled-components'
-import Tooltip from '../Tooltip'
+import styled, { css } from 'styled-components';
+import Tooltip from '../Tooltip';
 
 interface ContainerProps {
   isFocused: boolean;
@@ -7,7 +7,7 @@ interface ContainerProps {
   isErrored: boolean;
 }
 
-const Container = styled.div<ContainerProps>`
+export const Container = styled.div<ContainerProps>`
   background: #232129;
   border-radius: 10px;
   border: 2px solid #232129;
@@ -23,19 +23,24 @@ const Container = styled.div<ContainerProps>`
   }
 
 
-  ${props => props.isErrored && css`
-    border-color: #C53030;
+  ${(props) =>
+    props.isErrored &&
+    css`
+      border-color: #c53030;
+    `}
 
-  `}
+  ${(props) =>
+    props.isFocused &&
+    css`
+      color: #ff9000;
+      border-color: #ff9000;
+    `}
 
-  ${props => props.isFocused && css`
-    color: #ff9000;
-    border-color: #ff9000;
-  `}
-
-  ${props => props.isFilled && css`
-    color: #ff9000;
-  `}
+  ${(props) =>
+    props.isFilled &&
+    css`
+      color: #ff9000;
+    `}
 
   input{
     flex: 1;
@@ -53,21 +58,19 @@ svg{
 }
 `;
 
-const Error = styled(Tooltip)`
+export const Error = styled(Tooltip)`
   height: 20px;
   margin-left: 16px;
-  svg{
+  svg {
     margin: 0;
   }
 
-  span{
+  span {
     background: #c53030;
     color: #fff;
 
-      &::before{
-        border-color: #c53030 transparent;
-      }
+    &::before {
+      border-color: #c53030 transparent;
+    }
   }
 `;
-
-export { Container, Error }

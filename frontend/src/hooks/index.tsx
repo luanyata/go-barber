@@ -1,12 +1,10 @@
-import React, { FunctionComponent } from 'react'
-import { AuthProvider } from './auth'
-import { ToastProvider } from './toast'
+import React, { FunctionComponent } from 'react';
+import { AuthProvider } from './auth';
+import { ToastProvider } from './toast';
 
 const AppProvider: FunctionComponent = ({ children }) => (
   <AuthProvider>
-    <ToastProvider>
-      {children}
-    </ToastProvider>
+    <ToastProvider>{children}</ToastProvider>
   </AuthProvider>
-)
-export default AppProvider
+);
+export default AppProvider;

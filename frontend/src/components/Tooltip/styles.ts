@@ -1,17 +1,16 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-
-const Container = styled.div`
+export const Container = styled.div`
   position: relative;
 
-  span{
+  span {
     width: 160px;
     background: #ff9000;
     padding: 8px;
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
-    opacity:0;
+    opacity: 0;
     transition: opacity 0.4s;
     visibility: hidden;
     position: absolute;
@@ -21,8 +20,8 @@ const Container = styled.div`
 
     color: #312e38;
 
-    &::before{
-      content:'';
+    &::before {
+      content: '';
       border-style: solid;
       border-color: #ff9000 transparent;
       border-width: 6px 6px 0 6px;
@@ -36,9 +35,6 @@ const Container = styled.div`
 
   &:hover span {
     opacity: 1;
-    visibility: visible
+    visibility: visible;
   }
-`
-
-
-export { Container };
+`;

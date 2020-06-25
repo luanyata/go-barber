@@ -1,20 +1,22 @@
-import React, { FunctionComponent } from 'react'
-import { Container } from './styles'
-
+import React, { FunctionComponent } from 'react';
+import { Container } from './styles';
 
 interface TooltipProps {
   title: string;
   className?: string;
 }
 
-const Tooltip: FunctionComponent<TooltipProps> = ({ title, className, children }) => {
+const Tooltip: FunctionComponent<TooltipProps> = ({
+  title,
+  className,
+  children,
+}) => {
   return (
     <Container className={className}>
       {children}
       <span>{title}</span>
     </Container>
-  )
-}
+  );
+};
 
-
-export default Tooltip
+export default Tooltip;

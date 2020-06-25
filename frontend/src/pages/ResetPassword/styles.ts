@@ -1,22 +1,22 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from 'styled-components';
 
-import { shade } from 'polished'
-import sigInBackgroundImg from '../../assets/sign-in-background.png'
+import { shade } from 'polished';
+import sigInBackgroundImg from '../../assets/sign-in-background.png';
 
-const Background = styled.div`
+export const Background = styled.div`
   flex: 1;
   background: url(${sigInBackgroundImg}) no-repeat center;
   background-size: cover;
 `;
 
-const Container = styled.div`
+export const Container = styled.div`
   height: 100vh;
 
   display: flex;
   align-items: stretch;
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,39 +34,38 @@ const appearFromLeft = keyframes`
     opacity: 1;
     transform: translateX(0);
   }
-`
+`;
 
-const AnimationContent = styled.div`
+export const AnimationContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-form {
+  form {
     margin: 80px 0;
     width: 340px;
     text-align: center;
 
     animation: ${appearFromLeft} 1s;
 
-
-    h1{
-      margin-bottom: 24px
+    h1 {
+      margin-bottom: 24px;
     }
 
-    a{
+    a {
       color: #f4ede8;
       display: block;
       margin-top: 24px;
       text-decoration: none;
       transition: color 0.2s;
 
-      &:hover{
+      &:hover {
         color: ${shade(0.2, '#f4ede8')};
       }
+    }
   }
-}
-> a{
+  > a {
     color: #ff9000;
     display: block;
     margin-top: 24px;
@@ -77,10 +76,8 @@ form {
       margin-right: 16px;
     }
 
-    &:hover{
+    &:hover {
       color: ${shade(0.2, '#ff9000')};
     }
   }
-`
-
-export { AnimationContent, Background, Container, Content }
+`;

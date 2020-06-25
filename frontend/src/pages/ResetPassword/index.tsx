@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom';
 
 import logoImg from '../../assets/logo.svg';
 import Button from '../../components/Button';
@@ -18,59 +18,60 @@ import api from '../../services/api';
 interface ResetPasswordFormData {
   email: string;
   password: string;
-  passwordConfirmation: string
+  passwordConfirmation: string;
 }
 
 const ResetPassword: FunctionComponent = () => {
-
   const formRef = useRef<FormHandles>(null);
-
 
   const { addToast } = useToast();
   const history = useHistory();
-  const location = useLocation()
+  const location = useLocation();
 
+  const handleSubmit = useCallback(
+    async (data: ResetPasswordFormData) => {
+      try {
+        formRef.current?.setErrors({});
+        const schema = Yup.object().shape({
+          password: Yup.string().required('Senha Obrigatória'),
+          passwordConfirmation: Yup.string().oneOf(
+            [Yup.ref('password'), null],
+            'Senha não são semelhantes',
+          ),
+        });
 
-  const handleSubmit = useCallback(async (data: ResetPasswordFormData) => {
+        await schema.validate(data, { abortEarly: false });
 
-    try {
-      formRef.current?.setErrors({})
-      const schema = Yup.object().shape({
-        password: Yup.string().required('Senha Obrigatória'),
-        passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Senha não são semelhantes')
-      })
+        const { password, passwordConfirmation } = data;
+        const token = location.search.replace('?token=', '');
 
-      await schema.validate(data, { abortEarly: false })
+        if (!token) {
+          throw new Error();
+        }
 
-      const { password, passwordConfirmation } = data;
-      const token = location.search.replace('?token=', '')
+        await api.post('/password/reset', {
+          password,
+          passwordConfirmation,
+          token,
+        });
 
-      if (!token) {
-        throw new Error()
+        history.push('/');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const erros = getValidationErrors(err);
+          formRef.current?.setErrors(erros);
+          return;
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro ao resetar senha',
+          description: 'Ocorreu um erro ao resetar a senha, tente novamente.',
+        });
       }
-
-      await api.post('/password/reset', {
-        password,
-        passwordConfirmation,
-        token
-      })
-
-      history.push('/')
-
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const erros = getValidationErrors(err);
-        formRef.current?.setErrors(erros);
-        return;
-      }
-
-      addToast({
-        type: 'error',
-        title: 'Erro ao resetar senha',
-        description: 'Ocorreu um erro ao resetar a senha, tente novamente.'
-      })
-    }
-  }, [location.search, addToast, history]);
+    },
+    [location.search, addToast, history],
+  );
 
   return (
     <Container>
@@ -94,14 +95,12 @@ const ResetPassword: FunctionComponent = () => {
               placeholder="COnfirmação da Senha"
             />
             <Button type="submit">Alterar Senha</Button>
-
           </Form>
         </AnimationContent>
       </Content>
       <Background />
     </Container>
   );
-
-}
+};
 
 export default ResetPassword;

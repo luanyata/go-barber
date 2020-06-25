@@ -1,22 +1,22 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from 'styled-components';
 
-import { shade } from 'polished'
-import sigUpBackgroundImg from '../../assets/sign-up-background.png'
+import { shade } from 'polished';
+import sigUpBackgroundImg from '../../assets/sign-up-background.png';
 
-const Background = styled.div`
+export const Background = styled.div`
   flex: 1;
   background: url(${sigUpBackgroundImg}) no-repeat center;
   background-size: cover;
 `;
 
-const Container = styled.div`
+export const Container = styled.div`
   height: 100vh;
 
   display: flex;
   align-items: stretch;
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,8 +24,6 @@ const Content = styled.div`
 
   width: 100%;
   max-width: 700px;
-
-
 `;
 
 const appearFromLeft = keyframes`
@@ -36,9 +34,9 @@ const appearFromLeft = keyframes`
     opacity: 1;
     transform: translateX(0);
   }
-`
+`;
 
-const AnimationContent = styled.div`
+export const AnimationContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,11 +48,11 @@ const AnimationContent = styled.div`
 
     animation: ${appearFromLeft} 1s;
 
-    h1{
-      margin-bottom: 24px
+    h1 {
+      margin-bottom: 24px;
     }
-}
-> a{
+  }
+  > a {
     color: #f4ede8;
     display: block;
     margin-top: 24px;
@@ -65,10 +63,8 @@ const AnimationContent = styled.div`
       margin-right: 16px;
     }
 
-    &:hover{
+    &:hover {
       color: ${shade(0.2, '#f4ede8')};
     }
   }
-`
-
-export { AnimationContent, Background, Container, Content }
+`;
