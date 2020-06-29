@@ -4,7 +4,14 @@ import api from '../services/api';
 
 interface AuthState {
   token: string;
-  user: object
+  user: User
+}
+
+interface User{
+  id:string;
+  name: string;
+  email:string;
+  avatarUrl:string;
 }
 
 interface SignCredentials {
@@ -13,7 +20,7 @@ interface SignCredentials {
 }
 
 interface AuthContextData {
-  user: object;
+  user: User;
   loading: boolean;
   signIn(credetials: SignCredentials): Promise<void>
   signOut(): void
