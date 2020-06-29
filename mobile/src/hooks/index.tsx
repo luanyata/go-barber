@@ -1,9 +1,7 @@
-import React, { FunctionComponent } from 'react'
-import { AuthProvider } from './auth'
+import React, { FunctionComponent } from 'react';
+import { AuthProvider } from './auth';
 
 const AppProvider: FunctionComponent = ({ children }) => (
-  <AuthProvider>
-    {children}
-  </AuthProvider>
-)
-export default AppProvider
+  <AuthProvider>{children}</AuthProvider>
+);
+export default AppProvider;

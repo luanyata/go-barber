@@ -2,9 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { View } from 'react-native';
 
 const AppointmentCreated: FunctionComponent = () => {
-  return (
-    <View/>
-  )
-}
+  return <View />;
+};
 
 export default AppointmentCreated;

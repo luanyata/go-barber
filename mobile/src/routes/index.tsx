@@ -11,11 +11,11 @@ const Routes: FunctionComponent = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#999" />
-      </View>)
+      </View>
+    );
   }
 
-  return user ? <AppRoutes /> : <AuthRoutes />
-}
-
+  return user ? <AppRoutes /> : <AuthRoutes />;
+};
 
 export default Routes;

@@ -2,7 +2,15 @@ import { useNavigation } from '@react-navigation/native';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/mobile';
 import React, { FunctionComponent, useCallback, useRef } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import * as Yup from 'yup';
 import logoImg from '../../assets/logo.png';
@@ -10,8 +18,14 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { useAuth } from '../../hooks/auth';
 import getValidationErrors from '../../utils/getValidationErros';
-import { Container, CreateAccountButton, CreateAccountButtonText, ForgotPassword, ForgotPasswordText, Title } from './styles';
-
+import {
+  Container,
+  CreateAccountButton,
+  CreateAccountButtonText,
+  ForgotPassword,
+  ForgotPasswordText,
+  Title,
+} from './styles';
 
 interface Crendentials {
   email: string;
@@ -25,42 +39,43 @@ const SignIn: FunctionComponent = () => {
 
   const { signIn } = useAuth();
 
-  const handleSignIn = useCallback(async (data: Crendentials) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSignIn = useCallback(
+    async (data: Crendentials) => {
+      try {
+        formRef.current?.setErrors({});
 
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('E-mail Obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().required('Senha Obrigatória'),
+        });
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .required('E-mail Obrigatório')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().required('Senha Obrigatória'),
-      });
+        await schema.validate(data, { abortEarly: false });
 
-      await schema.validate(data, { abortEarly: false });
+        await signIn({
+          email: data.email,
+          password: data.password,
+        });
 
-      await signIn({
-        email: data.email,
-        password: data.password,
-      });
+        console.log(data);
 
-      console.log(data);
+        // history.push('/dashboard');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const erros = getValidationErrors(err);
+          formRef.current?.setErrors(erros);
+          return;
+        }
 
-
-      // history.push('/dashboard');
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const erros = getValidationErrors(err);
-        formRef.current?.setErrors(erros);
-        return;
+        Alert.alert(
+          'Erro ao autentição',
+          'Ocorreu um erro ao fazer login, cheque as credencias.',
+        );
       }
-
-      Alert.alert(
-        'Erro ao autentição',
-        'Ocorreu um erro ao fazer login, cheque as credencias.',
-      );
-    }
-  }, [signIn]);
+    },
+    [signIn],
+  );
 
   return (
     <>
@@ -107,7 +122,7 @@ const SignIn: FunctionComponent = () => {
               </Button>
             </Form>
 
-            <ForgotPassword onPress={() => { }}>
+            <ForgotPassword onPress={() => {}}>
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
           </Container>

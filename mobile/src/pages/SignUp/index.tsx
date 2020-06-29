@@ -2,7 +2,15 @@ import { useNavigation } from '@react-navigation/native';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/mobile';
 import React, { FunctionComponent, useCallback, useRef } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import * as Yup from 'yup';
 import logoImg from '../../assets/logo.png';
@@ -25,36 +33,36 @@ const SignUp: FunctionComponent = () => {
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleSignUp = useCallback(async (data: CreateUser) => {
-    try {
-      formRef.current?.setErrors({});
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string()
-          .required('E-mail Obrigatorio')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().min(6, 'Minimo de 6 digitos'),
-      });
-      await schema.validate(data, { abortEarly: false });
+  const handleSignUp = useCallback(
+    async (data: CreateUser) => {
+      try {
+        formRef.current?.setErrors({});
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatório'),
+          email: Yup.string()
+            .required('E-mail Obrigatorio')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().min(6, 'Minimo de 6 digitos'),
+        });
+        await schema.validate(data, { abortEarly: false });
 
-      await api.post('/users', data);
+        await api.post('/users', data);
 
-      navigation.goBack()
+        navigation.goBack();
 
-      Alert.alert('Cadastro realizado com sucesso!');
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const erros = getValidationErrors(err);
-        formRef.current?.setErrors(erros);
-        return;
+        Alert.alert('Cadastro realizado com sucesso!');
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const erros = getValidationErrors(err);
+          formRef.current?.setErrors(erros);
+          return;
+        }
+
+        Alert.alert('Erro de criação', 'Ocorreu um erro ao criar o usuário.');
       }
-
-      Alert.alert(
-        'Erro de criação',
-        'Ocorreu um erro ao criar o usuário.',
-      );
-    }
-  }, [navigation]);
+    },
+    [navigation],
+  );
 
   return (
     <>
