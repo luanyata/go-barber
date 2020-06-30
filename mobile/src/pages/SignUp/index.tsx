@@ -19,12 +19,7 @@ import Input from '../../components/Input';
 import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErros';
 import { BackToSignIn, BackToSignInText, Container, Title } from './styles';
-
-interface CreateUser {
-  name: string;
-  email: string;
-  password: string;
-}
+import { CreateUser } from './types';
 
 const SignUp: FunctionComponent = () => {
   const navigation = useNavigation();

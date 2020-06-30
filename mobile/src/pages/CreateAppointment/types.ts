@@ -3,3 +3,12 @@ export interface Provider {
   name: string;
   avatarUrl: string;
 }
+
+export interface RouteParams {
+  providerId: string;
+}
+
+export interface AvailabilityItem {
+  hour: number;
+  available: boolean;
+}

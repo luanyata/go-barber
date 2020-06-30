@@ -26,11 +26,7 @@ import {
   ForgotPasswordText,
   Title,
 } from './styles';
-
-interface Crendentials {
-  email: string;
-  password: string;
-}
+import { Crendentials } from './types';
 
 const SignIn: FunctionComponent = () => {
   const navigation = useNavigation();
