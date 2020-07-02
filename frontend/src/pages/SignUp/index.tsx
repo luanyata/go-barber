@@ -35,6 +35,7 @@ const SignUp: FunctionComponent = () => {
             .email('Digite um e-mail válido'),
           password: Yup.string().min(6, 'Minimo de 6 digitos'),
         });
+
         await schema.validate(data, { abortEarly: false });
 
         await api.post('/users', data);
