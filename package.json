@@ -1,0 +1,32 @@
+{
+  "name": "go-barber",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/clients/*",
+    "packages/shared/configs/*"
+  ],
+  "repository": "git@github.com:luanyata/go-barber.git",
+  "author": "Luan Lima <luan@yata.dev>",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
+    "@go-barber/eslint": "*",
+    "@types/jest": "^26.0.20",
+    "commitizen": "^4.2.3",
+    "cz-emoji": "^1.3.1",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./backend/node_modules/cz-emoji"
+    }
+  },
+  "dependencies": {
+    "date-fns": "^2.19.0"
+  }
+}

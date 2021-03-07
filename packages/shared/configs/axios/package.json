@@ -1,0 +1,9 @@
+{
+  "name": "@go-barber/axios",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
